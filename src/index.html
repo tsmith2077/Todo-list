@@ -19,14 +19,26 @@
                 <div class="thisWeek">This Week</div>
                 <div class="projects">Projects</div>
                 <button id="addProjectBtn">Add Project</button>
+                <div class="allProjectsContainer"></div>
             </div>
             <div class="todoSection">
                 <div class="todoAndAddBtn">
                 <div class="addItemBtnCont">
                     <button id="addItemBtn">Add item</button>
                 </div>
-                <div class="allTodoListItems"></div>
+                <div class="allListItemsContainer"></div>
             </div>
+        </div>
+        <!-- The Modal -->
+        <div id="addProjectModal" class="modal">
+        <!-- Modal content -->
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <label for="addProjectInput">New Project Name:</label>
+            <input type="text", id="addProjectInput">
+            <button id="projectSubmitBtn">Submit</button>
+        </div>
+
         </div>
     </div>
 </body>

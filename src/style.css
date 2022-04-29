@@ -47,18 +47,9 @@
 }
 
 .projects {
-    margin-top: 4rem;
+    margin-top: 2rem;
     border-bottom: solid black 2px;
-    padding-bottom: 1rem;
 }
-
-/* .addItemBtnCont {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-self: center;
-    width: 100%;
-} */
 
 .todoSection {
     display: flex;
@@ -92,39 +83,119 @@
 .priorityBtnContainer {
     display: flex;
     justify-content: flex-end;
+    align-items: center;
+    margin-left: auto;
+    margin-right: 2rem;
     align-content: center;
     gap: 1rem;
 }
 
 .todoTextContent {
-    flex-basis: 70%;
+    flex-basis: 50%;
 }
 
 .todoPriority {
     margin-top: .5rem;
+    margin-right: 4rem;
 }
 
-#addItemBtn, #addProjectBtn {
+#addItemBtn, 
+#addProjectBtn,
+.projectNameBtn {
     display: flex;
     align-items: center;
     justify-content: center;
     height: 2rem;
     width: 8rem;
-    margin-bottom: 1rem;
+    margin-bottom: .5rem;
+}
+
+#addProjectBtn {
+    width: 10rem;
+}
+
+#addProjectBtn,
+.projectNameBtn {
+    background-color: lightcyan;
+    border-color: lightgray;
+    width: 10rem;
 }
 
 .itemTextInput {
     width: 30vw;
 }
 
-.listItemBtn {
+.listItemBtn, 
+#projectSubmitBtn {
     height: 2rem;
     width: 4rem;
 }
 
-.submitBtn {
+.priorityInput {
+    margin-right: 2rem;
+}
+
+.priorityBtnContainer > p {
+    display: flex;
+    font-size: medium;
+    margin-right: -.2rem;
+    margin-bottom: .5rem;
+}
+
+/* New project modal */
+/* The Modal (background) */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+  }
+
+/* Modal Content/Box */
+.modal-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: lightcyan;
+    margin-top: 15%;
+    margin-left: 25%;
+    padding: 10px 10px;
+    border: 1px solid #888;
+    width: 60%; /* Could be more or less, depending on screen size */
+    border-radius: 20px;
+}
+
+/* The Close Button */
+.close {
+    color: #aaa;
     margin-left: auto;
-    margin-right: 4rem;
-    width: 6rem;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.modal-content > label {
+    font-size: x-large;
+}
+
+.modal-content > input {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    width: 40vw;
+}
+
+#projectSubmitBtn {
+    margin-bottom: 1rem;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
 }
 
