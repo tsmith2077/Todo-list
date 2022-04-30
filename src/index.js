@@ -3,10 +3,55 @@ import './style.css';
 var todoListModule = (function() {
 
     // Default array for holding todo list if not project is selected
-    let todoListArr = [];
+    let allProjects = [];
+    let currentProjectIndex = 0;
 
     const addItemBtn = document.querySelector('#addItemBtn');
     const allListItemsContainer = document.querySelector('.allListItemsContainer');
+    const projectSubmitBtn = document.querySelector('#projectSubmitBtn');
+    const allProjectsContainer = document.querySelector('.allProjectsContainer');
+
+
+    // // NEW PROJECT
+    const addProjectToArr = ((project) => allProjects.push(project))
+
+    projectSubmitBtn.addEventListener('click', () => {
+        let newProjectName = document.querySelector('#addProjectInput').value;
+        let newProject = createProject(newProjectName);
+        addProjectModal.style.display = "none";
+        allProjectsContainer.appendChild(newProject);
+        printTodoListToDom();
+    });
+
+    // Create new project
+    const createProject = ((newProjectName) => {
+        let newProjectBtn = document.createElement('button');
+        newProjectBtn.textContent = newProjectName;
+        newProjectBtn.classList.add('projectNameBtn');
+        newProjectBtn.setAttribute('index', (allProjects.length));
+        createNewProjectArr();
+        newProjectBtn.addEventListener('click', function() { showProjectList(event) });
+        changeCurrentProjectIndex(newProjectBtn);
+        return newProjectBtn;
+    });
+
+    // Creates a new array to hold new project todo list
+    const createNewProjectArr = (() => { 
+        let newProjectTodoList = [];
+        addProjectToArr(newProjectTodoList);
+        return allProjects;
+    });
+
+    // // Click event listener for changing projects and displaying to DOM
+    const showProjectList = ((event) => {
+        let clickedProjectIndex = event.target
+        changeCurrentProjectIndex(clickedProjectIndex);
+        printTodoListToDom(allProjects[currentProjectIndex]);
+    });
+
+    const changeCurrentProjectIndex = ((newProjectBtn) => {
+        currentProjectIndex = newProjectBtn.getAttribute('index');
+    })
 
 
     // ADD NEW PROJECT MODAL
@@ -17,6 +62,8 @@ var todoListModule = (function() {
     // Add Project Button to for opening modal
     addProjectBtn.addEventListener ('click', () => {
         addProjectModal.style.display = "block";
+        let projectInput = document.querySelector('#addProjectInput');
+        projectInput.value = "";
     });
     // When the user clicks on <span> (x), close the modal
     span.onclick = function() {
@@ -39,18 +86,19 @@ var todoListModule = (function() {
     });
 
     const cancelBtnListener = (() => {
-        printTodoListToDom(todoListArr);
+        addItemBtn.disabled = false;
+        printTodoListToDom();
     });
 
     const editBtnListener = ((event) => {
         const selectedListItem = event.target.parentNode.parentNode.getAttribute('value');
-        printTodoListToDom(todoListArr, selectedListItem);
+        printTodoListToDom(selectedListItem);
     });
 
     const deleteListItem = ((event) => {
-        todoListArr.splice((event.target.parentNode.parentNode.getAttribute('value')), 1);
+        allProjects[currentProjectIndex].splice((event.target.parentNode.parentNode.getAttribute('value')), 1);
         allListItemsContainer.innerHTML = "";
-        printTodoListToDom(todoListArr);
+        printTodoListToDom();
     });
 
     const submitListItem = ((listItem) => {
@@ -63,18 +111,19 @@ var todoListModule = (function() {
 
     // FORMAT FOR CONFIRMED AND EDITING TODO LIST ITEM
     // Format for a list item in editing format
-    const editListItemFormat = ((todoListItem, todoListArr, i) => {
+    const editListItemFormat = ((todoListItem, i) => {
         let textInput = createTextInput();
 
         // Create Select input for task priority
         let prioritySelectInput = createSelect();
         prioritySelectInput.classList.add('priorityInput');
-
+        // FIX
         // Fill in input to what was previous entered
-        if (todoListArr != undefined){
-            textInput.value = todoListArr[i].title;
-            prioritySelectInput.value = todoListArr[i].priority;
-        }
+        // if (todoTextContent != undefined) {
+        //     textInput.value = "Hello";
+        //     // textInput.value = allProjects[currentProjectIndex][i].title;
+        //     // prioritySelectInput.value = allProjects[currentProjectIndex][i].priority;
+        // }
 
         // Create cancel and submit btns
         let cancelBtn = createBtn('cancel');
@@ -91,10 +140,10 @@ var todoListModule = (function() {
     });
 
     // Creates list item in the confirmed todo list item format
-    const confirmedListItemFormat = ((todoListItem, todoListArr, i) => {
+    const confirmedListItemFormat = ((todoListItem, i) => {
         const checkbox = createCheckbox();
-        const todoDescription = createTodoDescription(todoListArr[i].title);
-        const todoPriority = createTodoPriorityText(todoListArr[i].priority);
+        const todoDescription = createTodoDescription(allProjects[currentProjectIndex][i].title);
+        const todoPriority = createTodoPriorityText(allProjects[currentProjectIndex][i].priority);
 
         // Create Edit and Delete Btn
         const editBtn = createBtn('edit');
@@ -105,7 +154,6 @@ var todoListModule = (function() {
         // Container for styling
         const priorityBtnContainer = createConfirmedPriorityBtnContainer(todoPriority, editBtn,
             deleteBtn);
-
         return appendConfirmedListItemToDom(todoListItem, priorityBtnContainer, checkbox, 
             todoDescription, priorityBtnContainer);
     });
@@ -118,16 +166,17 @@ var todoListModule = (function() {
         todoItem.title = title;
         todoItem.priority = priority;
 
+        if (allProjects.length == 0) {
+            createNewProjectArr()
+        }
         if (!listItem.hasAttribute('value')) {
-            const addTodoToArr = ((todoItem) => todoListArr.push(todoItem))
-            addTodoToArr(todoItem); // add to array todoList
+            const addTodoToCurrentProject = ((todoItem) => allProjects[currentProjectIndex].push(todoItem))
+            addTodoToCurrentProject(todoItem); // add list item to nested project array
         } else {
             let currentIndex = listItem.getAttribute('value');
-            todoListArr.splice(currentIndex, 1, todoItem);
+            allProjects[currentProjectIndex].splice(currentIndex, 1, todoItem);
         }
-        console.log(todoListArr)
-        printTodoListToDom(todoListArr);
-        return {todoItem, todoListArr};
+        printTodoListToDom(allProjects[currentProjectIndex]);
     });
 
     // Converts text input for todo description to p element
@@ -152,7 +201,7 @@ var todoListModule = (function() {
     const createTodoContainer = (() => {
         let todoListItem = document.createElement('div');
         todoListItem.classList.add('listItem');
-        if (todoListArr == ""){
+        if (allProjects[currentProjectIndex] == ""){
             editListItemFormat(todoListItem);
         }
         return todoListItem;
@@ -238,18 +287,18 @@ var todoListModule = (function() {
 
 
     // FUNCTIONS FOR APPENDING TO THE DOM
-    // Loops through array and appends list items to dom.
+    // Loops through array of current project and appends list items to dom.
     // If list item is 'selectListItem' from clicking edit btn, 
     // it will be in edit format and not confirmed
-    const printTodoListToDom = ((passedTodoListArr, selectedListItem=undefined) => {
+    const printTodoListToDom = ((selectedListItem=undefined) => {
         allListItemsContainer.innerHTML = "";
-        for (var i=0; i<todoListArr.length; i++) {
+        for (var i=0; i<allProjects[currentProjectIndex].length; i++) {
             const todoListItem = createTodoContainer();
             todoListItem.setAttribute('value', [i]);
             if (i == selectedListItem) {
-                editListItemFormat(todoListItem, passedTodoListArr, i);
+                editListItemFormat(todoListItem, i);
             } else {
-                confirmedListItemFormat(todoListItem, passedTodoListArr, i);
+                confirmedListItemFormat(todoListItem, i);
             }
         }
     })
