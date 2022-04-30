@@ -1,6 +1,6 @@
 import './style.css';
 
-var todoListModule = (function() {
+const todoListModule = (function() {
 
     // Default array for holding todo list if not project is selected
     let allProjects = [];
@@ -117,13 +117,12 @@ var todoListModule = (function() {
         // Create Select input for task priority
         let prioritySelectInput = createSelect();
         prioritySelectInput.classList.add('priorityInput');
-        // FIX
+
         // Fill in input to what was previous entered
-        // if (todoTextContent != undefined) {
-        //     textInput.value = "Hello";
-        //     // textInput.value = allProjects[currentProjectIndex][i].title;
-        //     // prioritySelectInput.value = allProjects[currentProjectIndex][i].priority;
-        // }
+        if (allProjects[currentProjectIndex] != undefined){
+            textInput.value = allProjects[currentProjectIndex][i].title;
+            prioritySelectInput.value = allProjects[currentProjectIndex][i].priority;
+        }
 
         // Create cancel and submit btns
         let cancelBtn = createBtn('cancel');
@@ -303,7 +302,7 @@ var todoListModule = (function() {
         }
     })
 
-    // Append todo list item to Dom
+    // Append todo list items to Dom
     const appendEditListItemToDom = ((todoListItem, priorityBtnContainer, textInput) => {
         todoListItem.appendChild(textInput);
         todoListItem.appendChild(priorityBtnContainer);
