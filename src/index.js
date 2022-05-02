@@ -1,4 +1,4 @@
-import { format, isThisWeek } from 'date-fns';
+import { isToday, isThisWeek } from 'date-fns';
 import './style.css';
 
 const todoListModule = (function() {
@@ -14,6 +14,7 @@ const todoListModule = (function() {
     const defaultProjectBtn = document.querySelector('#defaultProjectBtn');
     const todaysTasks = document.querySelector('#todaysTasks');
     const thisWeeksTasks = document.querySelector('#thisWeeksTasks');
+    const deleteCurrentProjectBtn = document.querySelector('#deleteCurrentProjectBtn');
 
 
     // // NEW PROJECT
@@ -89,7 +90,26 @@ const todoListModule = (function() {
         editListItemFormat(listItem);
     });
 
-    todaysTasks.addEventListener('click', function() { console.log('hello') });
+    // Delete Current Project
+    deleteCurrentProjectBtn.addEventListener('click', () => {
+        if (currentProjectIndex == 2) {
+            allProjects[2] = []; // Default project array. Clearing the array instead of deleteing it.
+        } else {
+            const currentProjectBtn = document.querySelector('.allProjectsContainer').children[currentProjectIndex-3];
+            currentProjectBtn.remove(); // Remove the project button for the removed project
+            allProjects.splice(currentProjectIndex, 1); // Removing the array for deleted project
+            // Change project btn's index based on what was deleted
+            const allProjectBtns = document.querySelectorAll('.projectNameBtn');
+            for (var i=0; i<allProjectBtns.length; i++) {
+                let btnIndex = (i + 3)
+                allProjectBtns[i].setAttribute('index', btnIndex);
+            }
+        }
+        currentProjectIndex = 2;
+        printTodoListToDom();
+    })
+
+    todaysTasks.addEventListener('click', function() { findTodaysTasks() });
 
     thisWeeksTasks.addEventListener('click', function() { findThisWeeksTasks() });
 
@@ -118,16 +138,6 @@ const todoListModule = (function() {
         let priority = listItem.children[1].children[0].value;
         let dueDate = formatDate(listItem);
         createTodoItem(title, priority, dueDate, listItem);
-    });
-
-    const formatDate = ((listItem) => {
-        var hasNumber = /\d/; 
-        if (hasNumber.test(listItem.children[1].children[1].value) == false) {
-            return "No Date";
-        } else {
-            let dateValue = format(new Date(listItem.children[1].children[1].value), 'MM.dd.yyyy');
-            return dateValue.replaceAll(".", "/");
-        }
     });
 
 
@@ -163,13 +173,31 @@ const todoListModule = (function() {
     });
 
     const findThisWeeksTasks = (() => {
+        currentProjectIndex = 1;
+        putTasksinArr();
+    });
+
+    const findTodaysTasks = (() => {
+        currentProjectIndex = 0;
+        putTasksinArr();
+    })
+
+    const putTasksinArr = (() => {
+        allProjects[0] = [];
+        allProjects[1] = [];
         for (var i=0; i<allProjects.length; i++){
-            for (var j=0; j<allProjects[i].length; j++)
-            if (isThisWeek(new Date(formatDateForUseInNewDate(allProjects[i][j].dueDate)))) {
-                allProjects[1].push(JSON.parse(JSON.stringify(allProjects[i][j])));
+            for (var j=0; j<allProjects[i].length; j++) {
+                if (currentProjectIndex == 1) {
+                    if (isThisWeek(new Date(formatDateForUseInNewDate(allProjects[i][j].dueDate)))) {
+                        allProjects[currentProjectIndex].push(JSON.parse(JSON.stringify(allProjects[i][j])));
+                    }
+                } else if (currentProjectIndex == 0) {
+                    if (isToday(new Date(formatDateForUseInNewDate(allProjects[i][j].dueDate)))) {
+                        allProjects[currentProjectIndex].push(JSON.parse(JSON.stringify(allProjects[i][j])));
+                    }
+                }
             }
         }
-        currentProjectIndex = 1;
         printTodoListToDom();
     });
 
@@ -239,6 +267,20 @@ const todoListModule = (function() {
         todoPriority.textContent = todoListPriorityText; 
         return todoPriority;
     })
+
+    const formatDate = ((listItem) => {
+        var hasNumber = /\d/; 
+        if (hasNumber.test(listItem.children[1].children[1].value) == false) {
+            return "No Date";
+        } else {
+            let dateValue = new Date(listItem.children[1].children[1].value);
+            const day = dateValue.getUTCDate();
+            const month = dateValue.getUTCMonth() + 1; // Return Value is 0 indexed
+            const year = dateValue.getUTCFullYear();
+            let fullDate = month + "/" + day + "/" + year;
+            return fullDate;
+        }
+    });
 
 
     // STYLING DIVS FUNCTIONS
