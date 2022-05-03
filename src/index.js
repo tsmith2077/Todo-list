@@ -3,12 +3,14 @@ import './style.css';
 
 import { createTodoContainer, createEditPriorityBtnContainer, createConfirmedPriorityBtnContainer, 
     appendEditPriorityContainer, createTextInput, createDateInput, createSelect, 
-    createCheckbox, createBtn, createTodoDescription, createDueDate, createTodoPriorityText,
-     } from './createInputs'
+    createCheckbox, createBtn, createTodoDescription, createDueDate, 
+    createTodoPriorityText } from './createInputs.js';
 
-    // allProjects empty arrays, 1) todaysTasks 2) thisWeeksTasks 3) Default project
-    export let allProjects = [[], [], []];
-    export let currentProjectIndex = 2;
+import { formatDate, createTodoItem, addTodoToCurrentProjectArr } from './createTodo';
+
+// allProjects empty arrays, 1) todaysTasks 2) thisWeeksTasks 3) Default project
+let allProjects = [[], [], []];
+let currentProjectIndex = 2;
 
 const todoListModule = (function() {
 
@@ -139,42 +141,8 @@ const todoListModule = (function() {
 
     const submitListItem = ((listItem) => {
         addItemBtn.disabled = false;
-        let title = listItem.children[0].value;
-        let priority = listItem.children[1].children[0].value;
-        let dueDate = formatDate(listItem);
-        createTodoItem(title, priority, dueDate, listItem);
-    });
-
-
-    // FORMAT FOR CONFIRMED AND EDITING TODO LIST ITEM
-    // Format for a list item in editing format
-    const editListItemFormat = ((todoListItem, i) => {
-        let textInput = createTextInput();
-
-        // Create Select input for task priority
-        let prioritySelectInput = createSelect();
-        prioritySelectInput.classList.add('priorityInput');
-
-        // Fill in input to what was previous entered
-        if (allProjects[currentProjectIndex][i] != undefined){
-            textInput.value = allProjects[currentProjectIndex][i].title;
-            prioritySelectInput.value = allProjects[currentProjectIndex][i].priority;
-        }
-
-        // Create date input
-        let dateInput = createDateInput();
-
-        // Create cancel and submit btns
-        let cancelBtn = createBtn('cancel');
-        cancelBtn.addEventListener('click', function() { cancelBtnListener(todoListItem) });
-        let submitBtn = createBtn('submit');
-        submitBtn.addEventListener('click', function() { submitListItem(todoListItem) });
-
-        // Container for styling
-        const priorityBtnContainer = createEditPriorityBtnContainer(prioritySelectInput,
-            dateInput, cancelBtn, submitBtn);
-
-        return appendEditListItemToDom(todoListItem, priorityBtnContainer, textInput);
+        createTodoItem(listItem);
+        printTodoListToDom()
     });
 
     const findThisWeeksTasks = (() => {
@@ -211,6 +179,75 @@ const todoListModule = (function() {
         return dateSplitWithComma;
     });
 
+    
+
+
+    // Loops through array of current project and appends list items to dom.
+    // If list item is 'selectListItem' from clicking edit btn, 
+    // it will be in edit format and not confirmed
+   // FUNCTIONS FOR CONVERTING VALUES FROM EDIT TO CONFIRMED TODO LIST ITEMS
+    // Convert input into an object and add to array
+    // const createTodoItem = ((title, priority, dueDate, listItem) => { 
+    //     let todoItem = {};
+    //     todoItem.title = title;
+    //     todoItem.priority = priority;
+    //     todoItem.dueDate = dueDate;
+
+    //     if (!listItem.hasAttribute('value')) {
+    //         const addTodoToCurrentProject = ((todoItem) => allProjects[currentProjectIndex].push(todoItem))
+    //         addTodoToCurrentProject(todoItem); // add list item object to nested project array
+    //     } else {
+    //         let currentIndex = listItem.getAttribute('value');
+    //         allProjects[currentProjectIndex].splice(currentIndex, 1, todoItem);
+    //     }
+    //     printTodoListToDom(allProjects[currentProjectIndex]);
+    // });
+
+
+    const printTodoListToDom = ((selectedListItem=undefined) => {
+        allListItemsContainer.innerHTML = "";
+            for (var i=0; i<Object.keys(allProjects[currentProjectIndex]).length; i++) {
+                const todoListItem = createTodoContainer();
+                todoListItem.setAttribute('value', [i]);
+                if (i == selectedListItem) {
+                    editListItemFormat(todoListItem, i);
+                } else {
+                    confirmedListItemFormat(todoListItem, i);
+                }
+            }
+    });
+
+    // FORMAT FOR CONFIRMED AND EDITING TODO LIST ITEM
+    // Format for a list item in editing format
+    const editListItemFormat = ((todoListItem, i) => {
+        let textInput = createTextInput();
+
+        // Create Select input for task priority
+        let prioritySelectInput = createSelect();
+        prioritySelectInput.classList.add('priorityInput');
+
+        // Fill in input to what was previous entered
+        if (allProjects[currentProjectIndex][i] != undefined){
+            textInput.value = allProjects[currentProjectIndex][i].title;
+            prioritySelectInput.value = allProjects[currentProjectIndex][i].priority;
+        }
+
+        // Create date input
+        let dateInput = createDateInput();
+
+        // Create cancel and submit btns
+        let cancelBtn = createBtn('cancel');
+        cancelBtn.addEventListener('click', function() { cancelBtnListener(todoListItem) });
+        let submitBtn = createBtn('submit');
+        submitBtn.addEventListener('click', function() { submitListItem(todoListItem) });
+
+        // Container for styling
+        const priorityBtnContainer = createEditPriorityBtnContainer(prioritySelectInput,
+            dateInput, cancelBtn, submitBtn);
+
+        return appendEditListItemToDom(todoListItem, priorityBtnContainer, textInput);
+    });
+
     // Creates list item in the confirmed todo list item format
     const confirmedListItemFormat = ((todoListItem, i) => {
         const checkbox = createCheckbox();
@@ -232,23 +269,58 @@ const todoListModule = (function() {
     });
 
 
-    // FUNCTIONS FOR CONVERTING VALUES FROM EDIT TO CONFIRMED TODO LIST ITEMS
-    // Convert input into an object and add to array
-    const createTodoItem = ((title, priority, dueDate, listItem) => { 
-        let todoItem = {};
-        todoItem.title = title;
-        todoItem.priority = priority;
-        todoItem.dueDate = dueDate;
 
-        if (!listItem.hasAttribute('value')) {
-            const addTodoToCurrentProject = ((todoItem) => allProjects[currentProjectIndex].push(todoItem))
-            addTodoToCurrentProject(todoItem); // add list item object to nested project array
-        } else {
-            let currentIndex = listItem.getAttribute('value');
-            allProjects[currentProjectIndex].splice(currentIndex, 1, todoItem);
-        }
-        printTodoListToDom(allProjects[currentProjectIndex]);
+    // Priority and button div container for todo list items for styling
+    const createEditPriorityBtnContainer = ((prioritySelectInput, dateInput,
+        cancelBtn, submitBtn) => {
+        let priorityBtnContainer = document.createElement('div');
+        priorityBtnContainer.classList.add('priorityBtnContainer');
+        return appendEditPriorityContainer(priorityBtnContainer, prioritySelectInput, dateInput, cancelBtn, 
+            submitBtn);
+    })
+
+    const createConfirmedPriorityBtnContainer = ((todoPriority, dueDate, editBtn, deleteBtn) => {
+        let priorityBtnContainer = document.createElement('div');
+        priorityBtnContainer.classList.add('priorityBtnContainer');
+        return appendConfirmedPriorityContainer(priorityBtnContainer, todoPriority, dueDate, 
+            editBtn, deleteBtn);
+    })
+
+    // FUNCTIONS FOR APPENDING TO THE DOM
+    // Append todo list items to Dom
+    // Appends priority select and buttons to container
+    const appendEditPriorityContainer = ((priorityBtnContainer, prioritySelectInput, dateInput, cancelBtn, 
+        submitBtn) => {
+            priorityBtnContainer.appendChild(prioritySelectInput);
+            priorityBtnContainer.appendChild(dateInput);
+            priorityBtnContainer.appendChild(cancelBtn);
+            priorityBtnContainer.appendChild(submitBtn);
+            return priorityBtnContainer;
+    })
+
+    const appendConfirmedPriorityContainer = ((priorityBtnContainer, todoPriority, dueDate, 
+        editBtn, deleteBtn) => {
+            priorityBtnContainer.appendChild(todoPriority);
+            priorityBtnContainer.appendChild(dueDate);
+            priorityBtnContainer.appendChild(editBtn);
+            priorityBtnContainer.appendChild(deleteBtn);
+            return priorityBtnContainer;
     });
+
+    const appendEditListItemToDom = ((todoListItem, priorityBtnContainer, textInput) => {
+        todoListItem.appendChild(textInput);
+        todoListItem.appendChild(priorityBtnContainer);
+        allListItemsContainer.appendChild(todoListItem);
+    }); 
+
+    const appendConfirmedListItemToDom = (
+        (todoListItem, priorityBtnContainer, checkbox, todoDescription) => {
+        todoListItem.appendChild(checkbox);
+        todoListItem.appendChild(todoDescription);
+        todoListItem.appendChild(priorityBtnContainer);
+        allListItemsContainer.appendChild(todoListItem);
+    });
+
 
     // Converts text input for todo description to p element
     const createTodoDescription = ((todoDescription) => {
@@ -288,40 +360,17 @@ const todoListModule = (function() {
     });
 
 
- 
-
-
-    // FUNCTIONS FOR APPENDING TO THE DOM
-    // Loops through array of current project and appends list items to dom.
-    // If list item is 'selectListItem' from clicking edit btn, 
-    // it will be in edit format and not confirmed
-    const printTodoListToDom = ((selectedListItem=undefined) => {
-        allListItemsContainer.innerHTML = "";
-            for (var i=0; i<Object.keys(allProjects[currentProjectIndex]).length; i++) {
-                const todoListItem = createTodoContainer();
-                todoListItem.setAttribute('value', [i]);
-                if (i == selectedListItem) {
-                    editListItemFormat(todoListItem, i);
-                } else {
-                    confirmedListItemFormat(todoListItem, i);
-                }
-            }
+    // STYLING DIVS FUNCTIONS
+    // Todo list item container
+    const createTodoContainer = (() => {
+        let todoListItem = document.createElement('div');
+        todoListItem.classList.add('listItem');
+        if (allProjects[currentProjectIndex] == ""){
+            editListItemFormat(todoListItem);
+        }
+        return todoListItem;
     });
-
-    // Append todo list items to Dom
-    const appendEditListItemToDom = ((todoListItem, priorityBtnContainer, textInput) => {
-        todoListItem.appendChild(textInput);
-        todoListItem.appendChild(priorityBtnContainer);
-        allListItemsContainer.appendChild(todoListItem);
-    }); 
-
-    const appendConfirmedListItemToDom = (
-        (todoListItem, priorityBtnContainer, checkbox, todoDescription) => {
-        todoListItem.appendChild(checkbox);
-        todoListItem.appendChild(todoDescription);
-        todoListItem.appendChild(priorityBtnContainer);
-        allListItemsContainer.appendChild(todoListItem);
-    });
-
     
 })();
+
+export { allProjects, currentProjectIndex }

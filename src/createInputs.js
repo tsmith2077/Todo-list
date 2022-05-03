@@ -125,5 +125,5 @@ const createTodoDescription = ((todoDescription) => {
 
 export { createTodoContainer, createEditPriorityBtnContainer, createConfirmedPriorityBtnContainer, 
     appendEditPriorityContainer, createTextInput, createDateInput, createSelect, 
-    createCheckbox, createBtn, createTodoDescription, createDueDate, createTodoPriorityText,
-    allProjects, currentProjectIndex }
+    createCheckbox, createBtn, createTodoDescription, createDueDate, 
+    createTodoPriorityText }

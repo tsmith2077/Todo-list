@@ -1,249 +1,181 @@
+import { isToday, isThisWeek } from 'date-fns';
 import './style.css';
 
-let todoList = [];
+import { createTodoContainer, createEditPriorityBtnContainer, createConfirmedPriorityBtnContainer, 
+    appendEditPriorityContainer, createTextInput, createDateInput, createSelect, 
+    createCheckbox, createBtn, createTodoDescription, createDueDate, createTodoPriorityText,
+     } from './createInputs'
 
-// Function for creating new todo item
-const createTodoItem = ((title, priority) => {
+import { printTodoListToDom, appendEditListItemToDom, appendConfirmedListItemToDom,
+    formatDate, editListItemFormat, confirmedListItemFormat } from './dom.js'
+
+    // allProjects empty arrays, 1) todaysTasks 2) thisWeeksTasks 3) Default project
+    export let allProjects = [[], [], []];
+    export let currentProjectIndex = 2;
+
+const todoListModule = (function() {
+
+    const addItemBtn = document.querySelector('#addItemBtn');
+    const allListItemsContainer = document.querySelector('.allListItemsContainer');
+    const projectSubmitBtn = document.querySelector('#projectSubmitBtn');
+    const allProjectsContainer = document.querySelector('.allProjectsContainer');
+    const defaultProjectBtn = document.querySelector('#defaultProjectBtn');
+    const todaysTasks = document.querySelector('#todaysTasks');
+    const thisWeeksTasks = document.querySelector('#thisWeeksTasks');
+    const deleteCurrentProjectBtn = document.querySelector('#deleteCurrentProjectBtn');
+
+    // BUTTON CLICK EVENT LISTENERS
+    addItemBtn.addEventListener('click', () => {
+        addItemBtn.disabled = true;
+        const listItem = document.createElement('div');
+        listItem.classList.add('listItem');
+        editListItemFormat(listItem);
+    });
+
+    // Delete Current Project
+    deleteCurrentProjectBtn.addEventListener('click', () => {
+        if (currentProjectIndex == 2) {
+            allProjects[2] = []; // Default project array. Clearing the array instead of deleteing it.
+        } else {
+            const currentProjectBtn = document.querySelector('.allProjectsContainer').children[currentProjectIndex-3];
+            currentProjectBtn.remove(); // Remove the project button for the removed project
+            allProjects.splice(currentProjectIndex, 1); // Removing the array for deleted project
+            // Change project btn's index based on what was deleted
+            const allProjectBtns = document.querySelectorAll('.projectNameBtn');
+            for (var i=0; i<allProjectBtns.length; i++) {
+                let btnIndex = (i + 3)
+                allProjectBtns[i].setAttribute('index', btnIndex);
+            }
+        }
+        currentProjectIndex = 2;
+        printTodoListToDom();
+    })
+
+    todaysTasks.addEventListener('click', function() { findTodaysTasks() });
+
+    thisWeeksTasks.addEventListener('click', function() { findThisWeeksTasks() });
+
+    // Btn event listener that shows default list of tasks
+    defaultProjectBtn.addEventListener('click', function() { showProjectList(event) });
+
+    // // NEW PROJECT
+    const addProjectToArr = ((project) => allProjects.push(project))
+
+    projectSubmitBtn.addEventListener('click', () => {
+        let newProjectName = document.querySelector('#addProjectInput').value;
+        let newProject = createProject(newProjectName);
+        addProjectModal.style.display = "none";
+        allProjectsContainer.appendChild(newProject);
+        printTodoListToDom();
+    });
+
+    // Create new project
+    const createProject = ((newProjectName) => {
+        let newProjectBtn = document.createElement('button');
+        newProjectBtn.textContent = newProjectName;
+        newProjectBtn.classList.add('projectNameBtn');
+        newProjectBtn.setAttribute('index', (allProjects.length));
+        createNewProjectArr();
+        newProjectBtn.addEventListener('click', function() { showProjectList(event) });
+        changeCurrentProjectIndex(newProjectBtn);
+        return newProjectBtn;
+    });
+
+    // Creates a new array to hold new project todo list
+    const createNewProjectArr = (() => { 
+        let newProjectTodoList = [];
+        addProjectToArr(newProjectTodoList);
+        return allProjects;
+    });
+
+    // // Click event listener for changing projects and displaying to DOM
+    const showProjectList = ((event) => {
+        let clickedProjectIndex = event.target
+        changeCurrentProjectIndex(clickedProjectIndex);
+        printTodoListToDom(allProjects[currentProjectIndex]);
+    });
+
+    const changeCurrentProjectIndex = ((newProjectBtn) => {
+        currentProjectIndex = newProjectBtn.getAttribute('index');
+    });
+
+
+    // ADD NEW PROJECT MODAL
+    var addProjectModal = document.getElementById("addProjectModal");
+    const addProjectBtn = document.getElementById("addProjectBtn");
+    // Get the <span> element that closes the modal
+    var span = document.getElementsByClassName("close")[0];
+    // Add Project Button to for opening modal
+    addProjectBtn.addEventListener ('click', () => {
+        addProjectModal.style.display = "block";
+        let projectInput = document.querySelector('#addProjectInput');
+        projectInput.value = "";
+    });
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function() {
+        addProjectModal.style.display = "none";
+    };
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+        if (event.target == addProjectModal) {
+            addProjectModal.style.display = "none";
+        }
+    };
+
+    const formatDateForUseInNewDate = ((dueDate) => {
+        let dateSplitWithComma = dueDate.replaceAll("/", ", ");
+        return dateSplitWithComma;
+    });
+
+    // TODAY'S TODO'S AND THIS WEEK'S TODO'S
+    // Store today's todo's and this week's todo's in allProjects[0] and allProjects[1]
+    const findThisWeeksTasks = (() => {
+        currentProjectIndex = 1;
+        putTasksinArr();
+    });
+
+    const findTodaysTasks = (() => {
+        currentProjectIndex = 0;
+        putTasksinArr();
+    })
+
+    const putTasksinArr = (() => {
+        allProjects[0] = [];
+        allProjects[1] = [];
+        for (var i=0; i<allProjects.length; i++){
+            for (var j=0; j<allProjects[i].length; j++) {
+                if (currentProjectIndex == 1) {
+                    if (isThisWeek(new Date(formatDateForUseInNewDate(allProjects[i][j].dueDate)))) {
+                        allProjects[currentProjectIndex].push(JSON.parse(JSON.stringify(allProjects[i][j])));
+                    }
+                } else if (currentProjectIndex == 0) {
+                    if (isToday(new Date(formatDateForUseInNewDate(allProjects[i][j].dueDate)))) {
+                        allProjects[currentProjectIndex].push(JSON.parse(JSON.stringify(allProjects[i][j])));
+                    }
+                }
+            }
+        }
+        printTodoListToDom();
+    });
+
+    
+})();
+
+const createTodoItem = ((title, priority, dueDate, listItem) => { 
     let todoItem = {};
     todoItem.title = title;
     todoItem.priority = priority;
+    todoItem.dueDate = dueDate;
 
-    const addTodoToArr = ((todoItem) => todoList.push(todoItem))
-
-    addTodoToArr(todoItem); // add to array todoList
-    return {todoItem, todoList};
-})
-
-
-// Function for creating checkbox for new todo item
-const createCheckbox = (() => {
-    const checkbox = document.createElement('input');
-    checkbox.setAttribute('type', 'checkbox');
-    checkbox.classList.add('checkbox');
-
-    return checkbox;
-})
-
-const createSelect = (() => {
-    const selectArr = ["Low Priority","Medium Priority","High Priority"];
-
-    //Create and append select list
-    const selectList = document.createElement("select");
-    selectList.id = "selectList";
-    
-    //Create and append the options
-    for (var i = 0; i < selectArr.length; i++) {
-        const option = document.createElement("option");
-        option.value = selectArr[i];
-        option.text = selectArr[i];
-        selectList.appendChild(option);
+    if (!listItem.hasAttribute('value')) {
+        const addTodoToCurrentProject = ((todoItem) => allProjects[currentProjectIndex].push(todoItem))
+        addTodoToCurrentProject(todoItem); // add list item object to nested project array
+    } else {
+        let currentIndex = listItem.getAttribute('value');
+        allProjects[currentProjectIndex].splice(currentIndex, 1, todoItem);
     }
-
-    return selectList;
-})
-
-const createBtn = ((btnName) => {
-    const btn = document.createElement('button');
-    btn.classList.add('listItemBtn', btnName);
-    btn.textContent = btnName;
-
-    return btn;
+    printTodoListToDom(allProjects[currentProjectIndex]);
 });
 
 
-
-// export { createTodoItem, todoList, createCheckbox, createSelect, createBtn }
-
-
-
-
-const domTodoList = document.querySelector('.todoList');
-const addTodoToArr = ((todoItem) => todoList.push(todoItem))
-
-let item1 = createTodoItem("First todo item", "Low priority");
-let item2 = createTodoItem("Second todo item", "Low priority");
-
-addTodoToArr(item1);
-addTodoToArr(item2);
-
-
-const printTodoListToDom = ((todoList) => {
-
-    for (var i=0; i<todoList.length; i++) {
-        const todoListItem = createTodoContainer();
-        todoListItem.setAttribute('value', [i]);
-        const checkbox = createCheckbox();
-
-        // Todo item Description
-        const todoTextContent = document.createElement('p');
-        todoTextContent.classList.add('todoTextContent');
-        todoTextContent.textContent = todoList[i].title;
-
-        const priorityBtnContainer = createPriorityBtnContainer();
-
-        // Todo item Priority
-        const todoPriority = document.createElement('p');
-        todoPriority.classList.add('todoPriority');
-        todoPriority.textContent = todoList[i].priority;
-
-        // Todo Buttons
-        const editBtn = createBtn('edit');
-        editBtn.setAttribute('value', [i]);
-        const deleteBtn = createBtn('delete');
-        deleteBtn.setAttribute('value', [i]);
-        deleteBtn.addEventListener('click', deleteListItem)
-
-        todoListItem.appendChild(checkbox);
-        todoListItem.appendChild(todoTextContent);
-        priorityBtnContainer.appendChild(todoPriority);
-        priorityBtnContainer.appendChild(editBtn);
-        priorityBtnContainer.appendChild(deleteBtn);
-        todoListItem.appendChild(priorityBtnContainer);
-        domTodoList.appendChild(todoListItem);
-    }
-})
-
-const createTodoContainer = (() => {
-    let todoListItem = document.createElement('div');
-    todoListItem.classList.add('listItem');
-    return todoListItem
-})
-
-const createPriorityBtnContainer = (() => {
-    let priorityBtnContainer = document.createElement('div');
-    priorityBtnContainer.classList.add('priorityBtnContainer');
-    return priorityBtnContainer;
-})
-
-const deleteListItem = ((event) => {
-    todoList.splice(event.target.value, 1);
-    domTodoList.innerHTML = "";
-    printTodoListToDom(todoList);
-});
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-const addItemBtn = document.querySelector('#addItemBtn');
-
-
-addItemBtn.addEventListener('click', addTodo());
-
-function addTodo() {
-
-}
-
-
-// const addTodoitem = (() => {
-
-    // const addItemBtn = document.querySelector('#addItemBtn');
-    // const todoListCont = document.querySelector('.todoList');
-    // const allCancelBtns = document.querySelectorAll('.cancel');
-
-    // addItemBtn.addEventListener('click', addTodoitem);
-
-
-    // // Add blank todo item for editing
-    // function addTodo() {
-    //     const newItem = document.createElement('div');
-    //     newItem.classList.add('listItem');
-
-    //     const newItemTextInput = createTextInput();
-    //     newItem.appendChild(newItemTextInput);
-
-    //     const submitBtn = createBtn('submit');
-    //     newItem.appendChild(submitBtn);
-
-    //     const cancelBtn = createBtn('cancel');
-    //     newItem.appendChild(cancelBtn);
-
-    //     addToDom(newItem);
-    // }
-
-    // // Append the blank todo item to dom
-    // function addToDom(newItem) {
-    //     todoListCont.appendChild(newItem);
-    // }
-
-    // // Create text input for new todo
-    // function createTextInput() {
-    //     const textInput = document.createElement('input');
-    //     textInput.setAttribute('type', 'text');
-    //     textInput.classList.add('itemTextInput');
-
-    //     return textInput;
-    // }
-
-    // // Creates submit and cancel buttons
-    // function createBtn(btnName) {
-    //     const btn = document.createElement('button');
-    //     btn.classList.add('listItemBtn', btnName);
-    //     btn.textContent = btnName;
-
-    //     submitCancelListeners(btnName, btn)
-
-    //     return btn;
-    // }
-
-    // // Adds event listeners to submit and cancel buttson
-    // function submitCancelListeners (btnName, btn) {
-    //     if (btnName == 'cancel') {
-    //         btn.addEventListener('click', cancelBtn);
-    //     } else if (btnName == 'submit') {
-    //         btn.addEventListener('click', submitBtn);
-    //     }
-    // }
-
-    // // Submit new 
-    // function submitBtn(event) {
-    //     let currentTodo = event.target.parentNode;
-    //     let previousTextInput = event.target.previousSibling;
-    //     let todoText;
-
-    //     while (previousTextInput) {
-    //         if (previousTextInput.classList.contains('itemTextInput')) {
-    //             todoText = previousTextInput.value;
-    //             break;
-    //         }
-    //     }
-
-    //     const checkbox = ('<input type="checkbox" class="checkbox">')
-    //     const editBtn = ('<button class="listItemBtn edit">');
-    //     const deleteBtn = ('<button class="listItemBtn edit">');
-    //     currentTodo.innerHTML = checkbox + todoText + editBtn + deleteBtn;
-    // }
-
-    // return {
-    //     addTodo,
-    //     addToDom,
-    //     cancelBtn,
-    //     submitBtn
-    // }
-
-// });
-
-// function createCheckbox() {
-//     const checkbox = document.createElement('input');
-//     checkbox.type = "checkbox";
-//     checkbox.classList.add('checkbox');
-// }
-
-// import myFunctions from './myFunctions.js';
-// import Edit from './img/edit.png';
-// import Trash from './img/trash.svg';
+export { createTodoItem }
