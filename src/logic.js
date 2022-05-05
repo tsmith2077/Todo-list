@@ -26,6 +26,7 @@ const addTodoToCurrentProjectArr = (todoItem, listItem) => {
     }
 }
 
+
 // Sort todo's in order of due date
 const sortByDate = (() => {
     allProjects[currentProjectIndex].sort(function(a,b){
