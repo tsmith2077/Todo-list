@@ -1,18 +1,19 @@
-/* @font-face {
-    font-family: 'MyFont';
-    src: url('./my-font.woff2') format('woff2'),
-      url('./my-font.woff') format('woff');
+@font-face {
+    font-family: 'MyHeaderFont';
+    src: url('./roboto/Roboto-Black.ttf') format('truetype');
     font-weight: 600;
     font-style: normal;
-} */
+}
 
-* {
-    padding: 0;
-    margin: 0;
+@font-face {
+    font-family: 'myFont';
+    src: url('./roboto/Roboto-Medium.ttf') format('truetype');
+    font-weight: 600;
+    font-style: normal;
 }
 
 .hero {
-    background-color: black;
+    background-color: #a9a9a9;
     display: flex;
     align-items: center;
     gap: 2rem;
@@ -25,30 +26,16 @@
     padding: 1rem 0 1rem 3rem;
 }
 
-.heroImg {
-    height: 4rem;
-    border-radius: 10px;
-}
-
-.sidebarAndTodo {
-    display: flex;
-    gap: 2rem;
-}
-
 .sidebar{
     display: flex;
     flex-direction: column;
     gap: .5rem;
     font-size: large;
-    background-color: lightcyan;
+    background-color: #caebf2;
+    box-shadow: 5px 10px black;
     height: 100vh;
     padding: 2rem;
     flex: 0 0 15%;
-}
-
-.projects {
-    margin-top: 2rem;
-    border-bottom: solid black 2px;
 }
 
 .todoSection {
@@ -56,7 +43,77 @@
     flex-direction: column;
     align-content: center;
     width: 100%;
+    background-color: #efefef;
 }
+
+#addProjectBtn,
+#defaultProjectBtn,
+.projectNameBtn {
+    background-color: #caebf2;
+    border-color: lightgray;
+    width: 10rem;
+    box-shadow: 0 10px 6px -6px #777;
+    margin-left: -.5rem;
+}
+
+#addProjectBtn {
+    margin-top: .5rem;
+}
+
+* {
+    padding: 0;
+    margin: 0;
+    font-family: 'MyFont';
+}
+
+/* Hero */
+
+.heroTitle {
+    font-family: 'myHeaderFont';
+}
+
+.heroImg {
+    height: 4rem;
+    border-radius: 10px;
+}
+
+#thisWeeksTodos:hover,
+#todaysTodos:hover,
+#completedTodos:hover,
+#notCompletedTodos:hover,
+button:hover {
+    color: #aaa;
+    cursor: pointer;
+}
+
+input,
+button,
+select {
+    cursor: pointer;
+}
+
+.sidebarAndTodo {
+    display: flex;
+}
+
+/* Sidebar */
+#sidebarHeader {
+    padding-bottom: .5rem;
+    font-size: 1.5rem;
+}
+
+#sidebarHeader,
+.projects {
+    text-decoration: underline;
+    font-family: 'MyHeaderFont';
+}
+
+.projects {
+    margin-top: 2rem;
+    font-size: 1.5rem;
+}
+
+/* Todo Section */
 
 .todoAndAddBtn {
     display: flex;
@@ -70,10 +127,12 @@
     display: flex;
     flex-direction: row;
     align-items: center;
+    justify-content: space-around;
     padding: .5rem 0 .5rem 2rem;
-    border: 5px solid black;
+    border: 2px solid black;
+    box-shadow: 0 10px 6px -3px #777;
     height: 3rem;
-    width: 70vw;
+    width: 65vw;
     margin-right: 2rem;
     margin-top: 1rem;
     gap: 1rem;
@@ -82,7 +141,7 @@
 
 .priorityBtnContainer {
     display: flex;
-    justify-content: space-around;
+    justify-content: center;
     align-items: center;
     margin-left: auto;
     margin-right: 2rem;
@@ -107,9 +166,18 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 3rem;
+    height: 2.5rem;
     width: 8rem;
-    margin-bottom: .5rem;
+    margin-bottom: .3rem;
+    border-radius: 24px;
+}
+
+#addItemBtn, 
+#deleteCurrentProjectBtn,
+.listItemBtn,
+#projectSubmitBtn {
+    box-shadow: 0 10px 6px -6px #777;
+    border-color: #a9a9a9;
 }
 
 #addItemBtnCont {
@@ -119,17 +187,7 @@
     justify-content: center;
 }
 
-#addProjectBtn {
-    width: 10rem;
-}
-
-#addProjectBtn,
-#defaultProjectBtn,
-.projectNameBtn {
-    background-color: lightcyan;
-    border-color: lightgray;
-    width: 10rem;
-}
+/* Btns */
 
 .itemTextInput {
     width: 20vw;
@@ -176,7 +234,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background-color: lightcyan;
+    background-color: #caebf2;
     margin-top: 15%;
     margin-left: 25%;
     padding: 10px 10px;
