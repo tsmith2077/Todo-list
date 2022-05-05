@@ -65,13 +65,13 @@ const formatDateForUseInNewDate = ((dueDate) => {
 });
 
 const resetProjectBtnIndex = (() => {
-    const currentProjectBtn = document.querySelector('.allProjectsContainer').children[currentProjectIndex-3];
+    const currentProjectBtn = document.querySelector('.allProjectsContainer').children[currentProjectIndex-2];
     currentProjectBtn.remove(); // Remove the project button for the removed project
     allProjects.splice(currentProjectIndex, 1); // Removing the array for deleted project
     // Change project btn's index based on what was deleted
     const allProjectBtns = document.querySelectorAll('.projectNameBtn');
     for (var i=0; i<allProjectBtns.length; i++) {
-        let btnIndex = (i + 3)
+        let btnIndex = (i + 2)
         allProjectBtns[i].setAttribute('index', btnIndex);
     }
 })
@@ -118,7 +118,7 @@ const createThisWeeksTodoArr = ((i, j) => {
 
 const createTodaysTodosArr = ((i, j) => {
     if (isToday(new Date(formatDateForUseInNewDate(allProjects[i][j].dueDate)))) {
-        allProjects[currentProjectIndex].push(JSON.parse(JSON.stringify(allProjects[0][j])));
+        allProjects[currentProjectIndex].push(JSON.parse(JSON.stringify(allProjects[i][j])));
     }
 });
 
