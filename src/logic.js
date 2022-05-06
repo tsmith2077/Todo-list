@@ -11,6 +11,8 @@ const createTodoItem = ((listItem) => {
     todoItem.priority = listItem.children[1].children[0].value;
     todoItem.dueDate = dateValue(listItem);
     todoItem.completed = "";
+    todoItem.originalProjectIndex = currentProjectIndex;
+    todoItem.todoListOrder = "";
     return addTodoToCurrentProjectArr(todoItem, listItem);
 });
 

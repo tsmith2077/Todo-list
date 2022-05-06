@@ -12,6 +12,8 @@ const allListItemsContainer = document.querySelector('.allListItemsContainer'); 
         for (var i=0; i<Object.keys(allProjects[currentProjectIndex]).length; i++) {
             const todoListItem = createTodoContainer();
             todoListItem.setAttribute('value', [i]);
+            allProjects[currentProjectIndex][i].todoListOrder = i;
+            todoListItem.classList.add()
             if (i == selectedListItem) {
                 editListItemFormat(todoListItem, i);
             } else {
@@ -52,19 +54,15 @@ const editListItemFormat = ((todoListItem, i) => {
 
 const confirmedListItemFormat = ((todoListItem, i) => {
     const checkbox = createCheckbox();
-    checkbox.addEventListener('change', function(event) {
-        if (event.target.checked) {
-            allProjects[currentProjectIndex][i].completed = true;
-        } else {
-            allProjects[currentProjectIndex][i].completed = false;
-        }
-    });
-
     checkbox.checked = allProjects[currentProjectIndex][i].completed;
 
     const todoDescription = createTodoDescription(allProjects[currentProjectIndex][i].title);
     const todoPriority = createTodoPriorityText(allProjects[currentProjectIndex][i].priority);
     const dueDate = createDueDate(allProjects[currentProjectIndex][i].dueDate);
+    // Used for applying changes to original array when list items are checked in allProjects[0]
+    checkbox.setAttribute('originalProjectIndex', allProjects[currentProjectIndex][i].originalProjectIndex);
+    checkbox.setAttribute('todoListOrder', allProjects[currentProjectIndex][i].todoListOrder);
+    checkbox.addEventListener('change', function(event) { checkboxEventFunc(event, i) });
 
     // Create Edit and Delete Btn
     const editBtn = createBtn('edit');
@@ -150,5 +148,39 @@ const deleteListItem = ((event) => {
     clearDomProject();
     printTodoListToDom();
 });
+
+// Checkbox Event Listener
+const checkboxEventFunc = ((event, i) => {
+    // Used for applying changes to original array
+    let originalProjectIndex = event.target.getAttribute('originalProjectIndex');
+    let todoListOrder = event.target.getAttribute('todoListOrder');
+    // Used for adjusting list item if it's in originalProject[0]
+    let currentItemOrder = event.target.parentNode.getAttribute('value');
+    if (event.target.checked) {
+        checkedCheckbox(originalProjectIndex, todoListOrder, currentItemOrder, i);
+        printTodoListToDom();
+    } else {
+        notCheckedCheckbox(originalProjectIndex, todoListOrder, currentItemOrder, i)
+        printTodoListToDom();
+    }
+})
+
+const checkedCheckbox = ((originalProjectIndex, todoListOrder, currentItemOrder, i) => {
+if (currentProjectIndex == 0) {
+    allProjects[originalProjectIndex][todoListOrder].completed = true;
+    allProjects[0][currentItemOrder].completed = true;
+} else {
+        allProjects[currentProjectIndex][i].completed = true;
+}
+})
+
+const notCheckedCheckbox = ((originalProjectIndex, todoListOrder, currentItemOrder, i) => {
+if (currentProjectIndex == 0) {
+    allProjects[originalProjectIndex][todoListOrder].completed = false;
+    allProjects[0][currentItemOrder].completed = false;
+} else {
+        allProjects[currentProjectIndex][i].completed = false;
+}
+})
 
 export { printTodoListToDom, editListItemFormat, submitListItem, cancelBtnListener, editBtnListener, deleteListItem }

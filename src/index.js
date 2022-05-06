@@ -4,7 +4,8 @@ import { createProjectBtn } from './createElementsFunctions.js';
 import { resetProjectBtnIndex, createNewProjectArr, putTodosinArr } from './logic';
 import { printTodoListToDom, editListItemFormat} from './dom.js'
 
-// allProjects empty arrays, 1) filteredTodo's (todaysTodos, thisWeeksTodos, completedTodos, notCompletedTodos) 2) Default project
+// allProjects empty arrays, 1) filteredTodo's (todaysTodos, thisWeeksTodos, completedTodos, notCompletedTodos) 
+// 2) Default project
 let allProjects = [[], []];
 let currentProjectIndex = 1;
 
