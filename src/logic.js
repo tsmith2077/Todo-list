@@ -67,9 +67,6 @@ const formatDateForUseInNewDate = ((dueDate) => {
 });
 
 const resetProjectBtnIndex = (() => {
-    const currentProjectBtn = document.querySelector('.allProjectsContainer').children[currentProjectIndex-2];
-    currentProjectBtn.remove(); // Remove the project button for the removed project
-    allProjects.splice(currentProjectIndex, 1); // Removing the array for deleted project
     // Change project btn's index based on what was deleted
     const allProjectBtns = document.querySelectorAll('.projectNameBtn');
     for (var i=0; i<allProjectBtns.length; i++) {
@@ -143,5 +140,7 @@ const clearDomProject = (() => {
 })
 
 
+
 export { createTodoItem, fillInPreviousData, formatDateForUseInNewDate, 
-    resetProjectBtnIndex, putTodosinArr, createNewProjectArr, clearDomProject };
+    resetProjectBtnIndex, putTodosinArr, createNewProjectArr, clearDomProject
+};

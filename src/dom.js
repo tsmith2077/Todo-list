@@ -20,6 +20,12 @@ const allListItemsContainer = document.querySelector('.allListItemsContainer'); 
                 confirmedListItemFormat(todoListItem, i);
             }
         }
+        if (allProjects.length > 2 || allProjects[1].length > 0) {
+            let allProjectsSerialized = JSON.stringify(allProjects);
+            localStorage.setItem("storedProjects", allProjectsSerialized);
+        } else {
+            localStorage.clear();
+        }
 });
 
 const editListItemFormat = ((todoListItem, i) => {
