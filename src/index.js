@@ -48,8 +48,11 @@ const todoListModule = (function () {
   const thisWeeksTodos = document.querySelector("#thisWeeksTodos");
   const completedTodos = document.querySelector("#completedTodos");
   const notCompletedTodos = document.querySelector("#notCompletedTodos");
-  var addProjectModal = document.getElementById("addProjectModal");
-  let closeModal = document.getElementsByClassName("close")[0]; // X That closes modal
+  const addProjectModal = document.getElementById("addProjectModal");
+  const closeModal = document.getElementsByClassName("close")[0]; // X That closes modal
+  const hamburgerIcon = document.querySelector('.hamburgerIcon'); // Open collapsible sidebar for mobile
+  const sidebar = document.querySelector('.sidebar');
+  const sidebarCloseBtn = document.querySelector('.sidebarCloseBtn');
 
   // BUTTON CLICK EVENT LISTENERS
   addItemBtn.addEventListener("click", () => {
@@ -79,6 +82,13 @@ const todoListModule = (function () {
   defaultProjectBtn.addEventListener("click", function () {
     showProjectList(event);
   });
+  hamburgerIcon.addEventListener("click", function () {
+    showSideBar();
+  });
+  sidebarCloseBtn.addEventListener("click", function () {
+    closeSideBar();
+  })
+
 
   // EVENT LISTENER FUNCTIONS
   // Static btn functions
@@ -88,6 +98,16 @@ const todoListModule = (function () {
     listItem.classList.add("listItem");
     editListItemFormat(listItem);
   };
+
+  const showSideBar = () => {
+    sidebar.style.width = '250px';
+    sidebar.style.padding = '2rem';
+  }
+
+  const closeSideBar = () => {
+    sidebar.style.width = '0px';
+    sidebar.style.padding = '0';
+  }
 
   let allProjectBtnArr = [];
 

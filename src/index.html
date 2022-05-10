@@ -9,11 +9,13 @@
 <body>
     <div id="fullWebpage">
         <div class="hero">
+            <img class="hamburgerIcon" src=<%=require("./img/hamburger.png")%> />
             <img class="heroImg" src=<%=require("./img/notepad.png")%> />
             <div class="heroTitle">Todo List</div>
         </div>
         <div class="sidebarAndTodo">
             <div class="sidebar">
+                <a href="javascript:void(0)" class="sidebarCloseBtn">&times;</a>
                 <div id="sidebarHeader">My Todo List</div>
                 <div id="todaysTodos">Today</div>
                 <div id="thisWeeksTodos">This Week</div>

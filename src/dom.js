@@ -106,6 +106,8 @@ const confirmedListItemFormat = (todoListItem, i) => {
   const deleteBtn = createBtn("delete");
   deleteBtn.addEventListener("click", deleteListItem);
 
+  const checkboxTodoContainer = createCheckboxTodoContainer(checkbox, todoDescription);
+
   // Container for styling
   const priorityBtnContainer = createConfirmedPriorityBtnContainer(
     todoPriority,
@@ -115,14 +117,24 @@ const confirmedListItemFormat = (todoListItem, i) => {
   );
   return appendConfirmedListItemToDom(
     todoListItem,
-    priorityBtnContainer,
-    checkbox,
-    todoDescription,
+    checkboxTodoContainer,
     priorityBtnContainer
   );
 };
 
 // Priority and button div container for todo list items for styling
+const createCheckboxTodoContainer = (checkbox, todoDescription) => {
+  const checkboxTodoContainer = document.createElement('div');
+  checkboxTodoContainer.classList.add('checkboxTodoContainer')
+  return appendCheckboxTodoContainer(checkboxTodoContainer, checkbox, todoDescription);
+}
+
+const appendCheckboxTodoContainer = (checkboxTodoContainer, checkbox, todoDescription) => {
+  checkboxTodoContainer.appendChild(checkbox);
+  checkboxTodoContainer.appendChild(todoDescription);
+  return checkboxTodoContainer;
+}
+
 const createEditPriorityBtnContainer = (
   prioritySelectInput,
   dateInput,
@@ -197,12 +209,10 @@ const appendEditListItemToDom = (
 
 const appendConfirmedListItemToDom = (
   todoListItem,
-  priorityBtnContainer,
-  checkbox,
-  todoDescription
+  checkboxTodoContainer,
+  priorityBtnContainer
 ) => {
-  todoListItem.appendChild(checkbox);
-  todoListItem.appendChild(todoDescription);
+  todoListItem.appendChild(checkboxTodoContainer);
   todoListItem.appendChild(priorityBtnContainer);
   allListItemsContainer.appendChild(todoListItem);
 };

@@ -12,6 +12,10 @@
     font-style: normal;
 }
 
+body {
+    background-color: #efefef;
+}
+
 .hero {
     background-color: #a9a9a9;
     display: flex;
@@ -42,7 +46,8 @@
     display: flex;
     flex-direction: column;
     align-content: center;
-    width: 100%;
+    width: 100vw;
+    height: 100vh;
     background-color: #efefef;
 }
 
@@ -137,6 +142,14 @@ select {
     margin-top: 1rem;
     gap: 1rem;
     border-radius: 10px;
+}
+
+.checkboxTodoContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
 }
 
 .priorityBtnContainer {
@@ -272,3 +285,84 @@ select {
     cursor: pointer;
 }
 
+
+.hamburgerIcon {
+    position: relative;
+    right: 1rem;
+}
+
+.sidebarCloseBtn {
+    display: none;
+}
+
+
+@media screen and (max-width: 480px) {
+
+    .listItem {
+        width: 95vw;
+        margin-right: 0;
+        height: 5rem;
+        padding: 0;
+        flex-direction: column;
+    }
+
+    .checkboxTodoContainer {
+        margin-right: auto;
+        margin-left: 1rem;
+        margin-top: 12px;
+    }
+
+    .priorityBtnContainer {
+        gap: .5rem;
+    }
+
+    .itemTextInput {
+        margin-top: 12px;
+        width: 85vw;
+    }
+
+    .listItemBtn {
+        width: 2rem;
+        height: 1.5rem;
+        margin-bottom: 8px;
+        font-size: .5rem;
+    }
+
+    .priorityInput, .todoPriority {
+        margin-left: 12px;
+    }
+    
+    /* Mobile side navigation menu */
+    .sidebar {
+        height: 100%; /* 100% Full-height */
+        width: 0; /* 0 width - change this with JavaScript */
+        position: fixed; /* Stay in place */
+        z-index: 0; /* Stay on top */
+        top: 0; /* Stay at the top */
+        left: 0;
+        overflow: hidden; /* Disable horizontal scroll */
+        padding-top: 60px; /* Place content 60px from the top */
+        transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
+        padding: 0;
+    }
+
+    .sidebarCloseBtn {
+        display: block;
+        font-size: 2rem;
+    }
+
+    /* The navigation menu links */
+    .sidenav div {
+        transition: 0.3s;
+    }
+    
+    /* Position and style the close button (top right corner) */
+    .sidenav .closebtn {
+        position: absolute;
+        top: 0;
+        right: 25px;
+        font-size: 36px;
+        margin-left: 50px;
+    }
+  
+}
