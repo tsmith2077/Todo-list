@@ -23,6 +23,8 @@
   "homepage": "https://github.com/tsmith2077/Todo-list#readme",
   "devDependencies": {
     "css-loader": "^6.7.1",
+    "eslint": "^8.15.0",
+    "eslint-plugin-react": "^7.29.4",
     "express": "^4.17.3",
     "html-webpack-plugin": "^5.5.0",
     "style-loader": "^3.3.1",
