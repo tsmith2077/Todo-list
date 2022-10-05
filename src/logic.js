@@ -18,22 +18,22 @@ const createTodoItem = (listItem) => {
 
 const addTodoToCurrentProjectArr = (todoItem, listItem) => {
   if (!listItem.hasAttribute("value")) {
-    const addTodoToCurrentProject = (todoItem) =>
+    const addTodoToCurrentProject = (todoItem) =>{
       allProjects[currentProjectIndex].push(todoItem);
+    }
     addTodoToCurrentProject(todoItem); // add list item object to nested project array
-    sortByDate();
   } else {
     let currentIndex = listItem.getAttribute("value");
     allProjects[currentProjectIndex].splice(currentIndex, 1, todoItem);
-    sortByDate();
   }
 };
 
-// Sort todo's in order of due date
-const sortByDate = () => {
-  allProjects[currentProjectIndex].sort(function (a, b) {
-    new Date(formatDateForUseInNewDate(a.dueDate)) -
-      new Date(formatDateForUseInNewDate(b.dueDate));
+// // Sort todo's in order of due date
+const sortByDate = (currentProjectIndex) => {
+  return currentProjectIndex.sort(function(a,b){
+    // Turn your strings into dates, and then subtract them
+    // to get a value that is either negative, positive, or zero.
+    return new Date(formatDateForUseInNewDate(a.dueDate)) - new Date(formatDateForUseInNewDate(b.dueDate));
   });
 };
 
@@ -102,7 +102,6 @@ const createCompletedTodoArr = (i, j) => {
     allProjects[currentProjectIndex].push(
       JSON.parse(JSON.stringify(allProjects[i][j]))
     );
-    sortByDate();
   }
 };
 
@@ -111,7 +110,6 @@ const createnotCompletedTodoArr = (i, j) => {
     allProjects[currentProjectIndex].push(
       JSON.parse(JSON.stringify(allProjects[i][j]))
     );
-    sortByDate();
   }
 };
 
@@ -122,7 +120,6 @@ const createThisWeeksTodoArr = (i, j) => {
     allProjects[currentProjectIndex].push(
       JSON.parse(JSON.stringify(allProjects[i][j]))
     );
-    sortByDate();
   }
 };
 
@@ -160,4 +157,5 @@ export {
   putTodosinArr,
   createNewProjectArr,
   clearDomProject,
+  sortByDate,
 };

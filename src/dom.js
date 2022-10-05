@@ -1,5 +1,5 @@
 import { allProjects, currentProjectIndex } from "./index.js";
-import { createTodoItem, fillInPreviousData, clearDomProject } from "./logic";
+import { createTodoItem, fillInPreviousData, clearDomProject, sortByDate } from "./logic";
 import {
   createTextInput,
   createDateInput,
@@ -24,6 +24,7 @@ const printTodoListToDom = (selectedListItem = undefined) => {
   ) {
     const todoListItem = createTodoContainer();
     todoListItem.setAttribute("value", [i]);
+    allProjects[currentProjectIndex] = sortByDate(allProjects[currentProjectIndex])
     allProjects[currentProjectIndex][i].todoListOrder = i;
     todoListItem.classList.add();
     if (i == selectedListItem) {
