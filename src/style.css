@@ -52,6 +52,7 @@ body {
 }
 
 #addProjectBtn,
+#deleteCurrentProjectBtn,
 #defaultProjectBtn,
 .projectNameBtn {
     background-color: #caebf2;
@@ -186,7 +187,6 @@ select {
 }
 
 #addItemBtn, 
-#deleteCurrentProjectBtn,
 .listItemBtn,
 #projectSubmitBtn {
     box-shadow: 0 10px 6px -6px #777;
@@ -287,6 +287,7 @@ select {
 
 
 .hamburgerIcon {
+    display: none;
     position: relative;
     right: 1rem;
 }
@@ -297,6 +298,12 @@ select {
 
 
 @media screen and (max-width: 480px) {
+
+    .hamburgerIcon {
+        display: block;
+        position: relative;
+        right: 1rem;
+    }
 
     .listItem {
         width: 95vw;

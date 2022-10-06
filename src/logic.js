@@ -1,30 +1,47 @@
 import { isToday, isThisWeek } from "date-fns";
 import { allProjects, currentProjectIndex } from "./index.js";
+import { v4 as uuidv4 } from 'uuid';
+import { printTodoListToDom } from "./dom.js";
 
 const allListItemsContainer = document.querySelector(".allListItemsContainer");
 
 // FUNCTIONS FOR CONVERTING VALUES FROM EDIT TO CONFIRMED TODO LIST ITEMS
 // Convert input into an object and add to array
-const createTodoItem = (listItem) => {
-  let todoItem = {};
+const createTodoItem = (listItem, selectedListItemId=null) => {
+  let todoItem = {}; 
   todoItem.title = listItem.children[0].value;
   todoItem.priority = listItem.children[1].children[0].value;
   todoItem.dueDate = dateValue(listItem);
   todoItem.completed = "";
-  todoItem.originalProjectIndex = currentProjectIndex;
+  todoItem.originalProjectIndex = `${currentProjectIndex}`;
   todoItem.todoListOrder = "";
+  if (selectedListItemId === null) {
+    todoItem.todoId = uuidv4();
+  } else {
+    todoItem.todoId = selectedListItemId;
+  }
   return addTodoToCurrentProjectArr(todoItem, listItem);
 };
 
 const addTodoToCurrentProjectArr = (todoItem, listItem) => {
-  if (!listItem.hasAttribute("value")) {
+  if (!listItem.hasAttribute("todoId")) {
     const addTodoToCurrentProject = (todoItem) =>{
       allProjects[currentProjectIndex].push(todoItem);
     }
     addTodoToCurrentProject(todoItem); // add list item object to nested project array
   } else {
-    let currentIndex = listItem.getAttribute("value");
-    allProjects[currentProjectIndex].splice(currentIndex, 1, todoItem);
+    // If todoItem exists, find it and update original project array
+    const editedTodo = listItem.getAttribute("todoId")
+    for (let i=0; i<allProjects.length; i++) {
+      for (let j=0; j<allProjects[i].length; j++) {
+        if (allProjects[i][j].todoId === editedTodo) {
+          const index = j;
+          const originalProjectIndex = i;
+          allProjects[originalProjectIndex][index] = todoItem;
+          printTodoListToDom()
+        }
+      }
+    }
   }
 };
 
@@ -69,14 +86,25 @@ const formatDateForUseInNewDate = (dueDate) => {
   return dateSplitWithComma;
 };
 
-const resetProjectBtnIndex = () => {
+const resetProjectBtnIndex = (deletedProjectIndex=0) => {
   // Change project btn's index based on what was deleted
-  const allProjectBtns = document.querySelectorAll(".projectNameBtn");
-  for (var i = 0; i < allProjectBtns.length; i++) {
+  const allProjectBtns = document.querySelector(".allProjectsContainer").children;
+  for (var i = deletedProjectIndex; i < allProjectBtns.length; i++) {
     let btnIndex = i + 2;
     allProjectBtns[i].setAttribute("index", btnIndex);
   }
 };
+
+const resetOriginalProjectTodoIndex = (deletedProjectIndex) => {
+  // Change the originalProjectIndex on todo elements
+  // Allows edits and deletes to modify original project when filtered
+  for (let i = deletedProjectIndex; i < allProjects.length; i++) {
+    for (let j=0; j<allProjects[i].length; j++) {
+      allProjects[i][j].originalProjectIndex = i;
+    }
+  }
+}
+
 
 // Figure out what we are trying to filter
 const putTodosinArr = (sortFilter) => {
@@ -158,4 +186,5 @@ export {
   createNewProjectArr,
   clearDomProject,
   sortByDate,
+  resetOriginalProjectTodoIndex,
 };

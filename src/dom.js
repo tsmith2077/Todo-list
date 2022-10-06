@@ -15,7 +15,7 @@ import {
 const allListItemsContainer = document.querySelector(".allListItemsContainer"); // Container for todo list items
 
 // APPEND THE TODO LIST TO THE DOM
-const printTodoListToDom = (selectedListItem = undefined) => {
+const printTodoListToDom = (selectedListItem = undefined, selectedListItemId=undefined) => {
   clearDomProject();
   for (
     var i = 0;
@@ -28,7 +28,7 @@ const printTodoListToDom = (selectedListItem = undefined) => {
     allProjects[currentProjectIndex][i].todoListOrder = i;
     todoListItem.classList.add();
     if (i == selectedListItem) {
-      editListItemFormat(todoListItem, i);
+      editListItemFormat(todoListItem, i, selectedListItemId);
     } else {
       confirmedListItemFormat(todoListItem, i);
     }
@@ -41,7 +41,10 @@ const printTodoListToDom = (selectedListItem = undefined) => {
   }
 };
 
-const editListItemFormat = (todoListItem, i) => {
+const editListItemFormat = (todoListItem, i, selectedListItemId=undefined) => {
+  if (selectedListItemId !== undefined) {
+    todoListItem.setAttribute("todoId", selectedListItemId)
+  }
   let textInput = createTextInput();
 
   // Create Select input for task priority
@@ -59,10 +62,14 @@ const editListItemFormat = (todoListItem, i) => {
   // Create cancel and submit btns
   let cancelBtn = createBtn("cancel");
   cancelBtn.addEventListener("click", function () {
+    const addItemBtn = document.querySelector("#addItemBtn");
+    addItemBtn.disabled = false;
     cancelBtnListener(todoListItem);
   });
   let submitBtn = createBtn("submit");
   submitBtn.addEventListener("click", function () {
+    const addItemBtn = document.querySelector("#addItemBtn");
+    addItemBtn.disabled = false;
     submitListItem(todoListItem);
   });
 
@@ -78,6 +85,8 @@ const editListItemFormat = (todoListItem, i) => {
 };
 
 const confirmedListItemFormat = (todoListItem, i) => {
+  todoListItem.setAttribute("originalProjectIndex", allProjects[currentProjectIndex][i].originalProjectIndex);
+  todoListItem.setAttribute("todoId", allProjects[currentProjectIndex][i].todoId)
   const checkbox = createCheckbox();
   checkbox.checked = allProjects[currentProjectIndex][i].completed;
 
@@ -220,30 +229,36 @@ const appendConfirmedListItemToDom = (
 
 // Dynamic Btn Listener Functions
 const submitListItem = (listItem) => {
-  // eslint-disable-next-line no-undef
-  addItemBtn.disabled = false;
-  createTodoItem(listItem);
+  const selectedListItemId = listItem.getAttribute("todoId");
+  createTodoItem(listItem, selectedListItemId);
   printTodoListToDom();
 };
 
 const cancelBtnListener = () => {
-  // eslint-disable-next-line no-undef
-  addItemBtn.disabled = false;
   printTodoListToDom();
 };
 
 const editBtnListener = (event) => {
+  const selectedListItemId = event.target.parentNode.parentNode.getAttribute("todoId");
   const selectedListItem =
     event.target.parentNode.parentNode.getAttribute("value");
-  printTodoListToDom(selectedListItem);
+  printTodoListToDom(selectedListItem, selectedListItemId);
 };
 
 const deleteListItem = (event) => {
+  const originalProjectIndex = event.target.parentNode.parentNode.getAttribute("originalProjectIndex");
+  let todoToBeDeleted = event.target.parentNode.parentNode.getAttribute("todoId")
+  const index = allProjects[originalProjectIndex].findIndex((obj) => obj.todoId === todoToBeDeleted);
+  // Delete from original project array when list is filtered
+  allProjects[originalProjectIndex].splice(
+    index,
+    1
+  );
+  // Delete from project array currently on DOM
   allProjects[currentProjectIndex].splice(
     event.target.parentNode.parentNode.getAttribute("value"),
     1
   );
-  clearDomProject();
   printTodoListToDom();
 };
 

@@ -63,7 +63,7 @@ const createProjectBtn = (newProjectName) => {
   let newProjectBtn = document.createElement("button");
   newProjectBtn.textContent = newProjectName;
   newProjectBtn.classList.add("projectNameBtn");
-  newProjectBtn.setAttribute("index", (allProjects.length - 1));
+  newProjectBtn.setAttribute("index", (allProjects.length));
   return newProjectBtn;
 };
 

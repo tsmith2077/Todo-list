@@ -3,13 +3,15 @@ import "./style.css";
 import { createProjectBtn } from "./createElementsFunctions.js";
 import {
   resetProjectBtnIndex,
+  resetOriginalProjectTodoIndex,
   createNewProjectArr,
   putTodosinArr,
 } from "./logic";
 import { printTodoListToDom, editListItemFormat } from "./dom.js";
 
-// allProjects empty arrays, 1) filteredTodos (todaysTodos, thisWeeksTodos, completedTodos, notCompletedTodos)
-// 2) Default project
+// allProjects empty arrays indexes
+// 0) filteredTodos (todaysTodos, thisWeeksTodos, completedTodos, notCompletedTodos)
+// 1) Default project
 const allProjectsContainer = document.querySelector(".allProjectsContainer"); // Container for Project Btns
 let currentProjectIndex = 1; // Default todo list array
 let allProjects = [[], []];
@@ -34,7 +36,7 @@ const todoListModule = (function () {
         showProjectList(event);
       });
     }
-    resetProjectBtnIndex();
+    // resetProjectBtnIndex();
   }
 
   const addItemBtn = document.querySelector("#addItemBtn");
@@ -115,6 +117,7 @@ const todoListModule = (function () {
     let newProjectName = document.querySelector("#addProjectInput").value;
     // Save Project Btn names to local storage
     allProjectBtnArr.push(newProjectName);
+    // resetProjectBtnIndex();
     saveBtnToLocalStorage();
 
     let newProject = createProject(newProjectName);
@@ -125,18 +128,21 @@ const todoListModule = (function () {
 
   const deleteCurrentProjectBtnListener = () => {
     addItemBtn.disabled = false;
-    if (currentProjectIndex == 1) {
+    if (currentProjectIndex === 1) {
       allProjects[1] = []; // Default project array. Clearing the array instead of deleteing it.
+    } else if (currentProjectIndex === 0) {
+        return
     } else {
       const currentProjectBtn = document.querySelector(".allProjectsContainer")
         .children[currentProjectIndex - 2];
+      const deletedProjectIndex = currentProjectIndex;
       currentProjectBtn.remove(); // Remove the project button for the removed project
       allProjects.splice(currentProjectIndex, 1); // Removing the array for deleted project
 
-      allProjectBtnArr.splice(currentProjectIndex - 2, 1);
+      allProjectBtnArr.splice(currentProjectIndex - 1, 1); // Deleting projectBtn from local storage
+      resetProjectBtnIndex(deletedProjectIndex - 2); // Subtracting 2 due to default and filtered arr
+      resetOriginalProjectTodoIndex(deletedProjectIndex);
       saveBtnToLocalStorage();
-
-      resetProjectBtnIndex();
     }
     currentProjectIndex = 1;
     printTodoListToDom();
