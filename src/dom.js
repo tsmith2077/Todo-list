@@ -17,27 +17,29 @@ const allListItemsContainer = document.querySelector(".allListItemsContainer"); 
 // APPEND THE TODO LIST TO THE DOM
 const printTodoListToDom = (selectedListItem = undefined, selectedListItemId=undefined) => {
   clearDomProject();
-  for (
-    var i = 0;
-    i < Object.keys(allProjects[currentProjectIndex]).length;
-    i++
-  ) {
-    const todoListItem = createTodoContainer();
-    todoListItem.setAttribute("value", [i]);
-    allProjects[currentProjectIndex] = sortByDate(allProjects[currentProjectIndex])
-    allProjects[currentProjectIndex][i].todoListOrder = i;
-    todoListItem.classList.add();
-    if (i == selectedListItem) {
-      editListItemFormat(todoListItem, i, selectedListItemId);
-    } else {
-      confirmedListItemFormat(todoListItem, i);
+  if (allProjects[currentProjectIndex].length > 0) {
+    for (
+      var i = 0;
+      i < Object.keys(allProjects[currentProjectIndex]).length;
+      i++
+    ) {
+      const todoListItem = createTodoContainer();
+      todoListItem.setAttribute("value", [i]);
+      allProjects[currentProjectIndex] = sortByDate(allProjects[currentProjectIndex])
+      allProjects[currentProjectIndex][i].currentListOrder = i;
+      todoListItem.classList.add();
+      if (i == selectedListItem) {
+        editListItemFormat(todoListItem, i, selectedListItemId);
+      } else {
+        confirmedListItemFormat(todoListItem, i);
+      }
     }
-  }
-  if (allProjects.length > 2 || allProjects[1].length > 0) {
-    let allProjectsSerialized = JSON.stringify(allProjects);
-    localStorage.setItem("storedProjects", allProjectsSerialized);
-  } else {
-    localStorage.clear();
+    if (allProjects.length > 2 || allProjects[1].length > 0) {
+      let allProjectsSerialized = JSON.stringify(allProjects);
+      localStorage.setItem("storedProjects", allProjectsSerialized);
+    } else {
+      localStorage.clear();
+    }
   }
 };
 
@@ -84,12 +86,23 @@ const editListItemFormat = (todoListItem, i, selectedListItemId=undefined) => {
   return appendEditListItemToDom(todoListItem, priorityBtnContainer, textInput);
 };
 
+// Foobar
 const confirmedListItemFormat = (todoListItem, i) => {
   todoListItem.setAttribute("originalProjectIndex", allProjects[currentProjectIndex][i].originalProjectIndex);
   todoListItem.setAttribute("todoId", allProjects[currentProjectIndex][i].todoId);
-  
   const checkbox = createCheckbox();
-  const originalProjectIndex = todoListItem.getAttribute("originalProjectIndex")
+  let originalProjectIndex;
+  if (currentProjectIndex.length > 0) {
+    originalProjectIndex = todoListItem.getAttribute("originalProjectIndex")
+  } else {
+    originalProjectIndex = currentProjectIndex;
+  }
+
+  // if (todoListItem.getAttribute("originalProjectIndex")) {
+  //   originalProjectIndex = todoListItem.getAttribute("originalProjectIndex")
+  // } else {
+  //   originalProjectIndex = currentProjectIndex;
+  // }
   checkbox.checked = allProjects[originalProjectIndex][i].completed;
 
   const todoDescription = createTodoDescription(
@@ -109,7 +122,7 @@ const confirmedListItemFormat = (todoListItem, i) => {
     allProjects[currentProjectIndex][i].todoListOrder
   );
   checkbox.addEventListener("change", function (event) {
-    checkboxEventFunc(event, i);
+    checkboxEventFunc(event);
   });
 
   // Create Edit and Delete Btn
@@ -265,21 +278,18 @@ const deleteListItem = (event) => {
 };
 
 // Checkbox Event Listener
-const checkboxEventFunc = (event, i) => {
+const checkboxEventFunc = (event) => {
   // Used for applying changes to original array
-  let originalProjectIndex = event.target.getAttribute("originalProjectIndex");
-  let todoListOrder = event.target.getAttribute("todoListOrder");
+  const originalProjectIndex = event.target.getAttribute("originalProjectIndex");
+  const todoListOrder = event.target.getAttribute("todoListOrder");
   // Used for adjusting list item if it's in originalProject[0]
-  let currentItemOrder = event.target.parentNode.getAttribute("value");
   if (event.target.checked) {
-    checkedCheckbox(originalProjectIndex, todoListOrder, currentItemOrder, i);
+    checkedCheckbox(originalProjectIndex, todoListOrder);
     printTodoListToDom();
   } else {
     notCheckedCheckbox(
       originalProjectIndex,
       todoListOrder,
-      currentItemOrder,
-      i
     );
     printTodoListToDom();
   }
@@ -288,28 +298,22 @@ const checkboxEventFunc = (event, i) => {
 const checkedCheckbox = (
   originalProjectIndex,
   todoListOrder,
-  currentItemOrder,
-  i
 ) => {
-  if (currentProjectIndex == 0) {
-    allProjects[originalProjectIndex][todoListOrder].completed = true;
-    allProjects[0][currentItemOrder].completed = true;
-  } else {
-    allProjects[currentProjectIndex][i].completed = true;
+  allProjects[originalProjectIndex][todoListOrder].completed = true;
+  if (originalProjectIndex != currentProjectIndex) {
+    let currentListOrder = event.target.parentNode.parentNode.getAttribute("value");
+    allProjects[currentProjectIndex][currentListOrder].completed = true;
   }
 };
 
 const notCheckedCheckbox = (
   originalProjectIndex,
   todoListOrder,
-  currentItemOrder,
-  i
 ) => {
-  if (currentProjectIndex == 0) {
-    allProjects[originalProjectIndex][todoListOrder].completed = false;
-    allProjects[0][currentItemOrder].completed = false;
-  } else {
-    allProjects[currentProjectIndex][i].completed = false;
+  allProjects[originalProjectIndex][todoListOrder].completed = false;
+  if (originalProjectIndex != currentProjectIndex) {
+    let currentListOrder = event.target.parentNode.parentNode.getAttribute("value");
+    allProjects[currentProjectIndex][currentListOrder].completed = false; 
   }
 };
 

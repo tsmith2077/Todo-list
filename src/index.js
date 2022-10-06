@@ -3,7 +3,7 @@ import "./style.css";
 import { createProjectBtn } from "./createElementsFunctions.js";
 import {
   resetProjectBtnIndex,
-  resetOriginalProjectTodoIndex,
+  resetOriginalProjectIndex,
   createNewProjectArr,
   putTodosinArr,
 } from "./logic";
@@ -141,7 +141,7 @@ const todoListModule = (function () {
 
       allProjectBtnArr.splice(currentProjectIndex - 1, 1); // Deleting projectBtn from local storage
       resetProjectBtnIndex(deletedProjectIndex - 2); // Subtracting 2 due to default and filtered arr
-      resetOriginalProjectTodoIndex(deletedProjectIndex);
+      resetOriginalProjectIndex(deletedProjectIndex);
       saveBtnToLocalStorage();
     }
     currentProjectIndex = 1;
