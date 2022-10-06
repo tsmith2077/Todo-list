@@ -86,9 +86,11 @@ const editListItemFormat = (todoListItem, i, selectedListItemId=undefined) => {
 
 const confirmedListItemFormat = (todoListItem, i) => {
   todoListItem.setAttribute("originalProjectIndex", allProjects[currentProjectIndex][i].originalProjectIndex);
-  todoListItem.setAttribute("todoId", allProjects[currentProjectIndex][i].todoId)
+  todoListItem.setAttribute("todoId", allProjects[currentProjectIndex][i].todoId);
+  
   const checkbox = createCheckbox();
-  checkbox.checked = allProjects[currentProjectIndex][i].completed;
+  const originalProjectIndex = todoListItem.getAttribute("originalProjectIndex")
+  checkbox.checked = allProjects[originalProjectIndex][i].completed;
 
   const todoDescription = createTodoDescription(
     allProjects[currentProjectIndex][i].title

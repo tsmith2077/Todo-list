@@ -128,11 +128,11 @@ const todoListModule = (function () {
 
   const deleteCurrentProjectBtnListener = () => {
     addItemBtn.disabled = false;
-    if (currentProjectIndex === 1) {
+    if (currentProjectIndex == 1) {
       allProjects[1] = []; // Default project array. Clearing the array instead of deleteing it.
-    } else if (currentProjectIndex === 0) {
+    } else if (currentProjectIndex == 0) {
         return
-    } else {
+    } else if (currentProjectIndex > 1) {
       const currentProjectBtn = document.querySelector(".allProjectsContainer")
         .children[currentProjectIndex - 2];
       const deletedProjectIndex = currentProjectIndex;
