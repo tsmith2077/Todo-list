@@ -26,6 +26,11 @@ const printTodoListToDom = (selectedListItem = undefined, selectedListItemId=und
       const todoListItem = createTodoContainer();
       todoListItem.setAttribute("value", [i]);
       allProjects[currentProjectIndex] = sortByDate(allProjects[currentProjectIndex])
+      if (currentProjectIndex > 0) {
+        for (let i=0; i<allProjects[currentProjectIndex].length; i++) {
+          allProjects[currentProjectIndex][i].todoListOrder = i;
+        }
+      }
       allProjects[currentProjectIndex][i].currentListOrder = i;
       todoListItem.classList.add();
       if (i == selectedListItem) {
@@ -86,7 +91,6 @@ const editListItemFormat = (todoListItem, i, selectedListItemId=undefined) => {
   return appendEditListItemToDom(todoListItem, priorityBtnContainer, textInput);
 };
 
-// Foobar
 const confirmedListItemFormat = (todoListItem, i) => {
   todoListItem.setAttribute("originalProjectIndex", allProjects[currentProjectIndex][i].originalProjectIndex);
   todoListItem.setAttribute("todoId", allProjects[currentProjectIndex][i].todoId);

@@ -1,1 +1,51 @@
-<!doctype html><html lang="en"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Todo List</title><script defer="defer" src="/index.bundle.js"></script></head><body><div id="fullWebpage"><div class="hero"><img class="hamburgerIcon" src="/7c20adac2b88ccdc927d.png"/> <img class="heroImg" src="/3ee624589ed5885ebf5c.png"/><div class="heroTitle">Todo List</div></div><div class="sidebarAndTodo"><div class="sidebar"><a href="javascript:void(0)" class="sidebarCloseBtn">&times;</a><div id="sidebarHeader">My Todo List</div><div id="todaysTodos">Today</div><div id="thisWeeksTodos">This Week</div><div id="completedTodos">Completed</div><div id="notCompletedTodos">Not Completed</div><div class="projects">Projects</div><button id="addProjectBtn">Add Project</button> <button id="deleteCurrentProjectBtn">Delete Current Project</button> <button id="defaultProjectBtn" index="1">Default</button><div class="allProjectsContainer"></div></div><div class="todoSection"><div class="todoAndAddBtn"><div id="addItemBtnCont"><button id="addItemBtn">Add todo</button></div><div class="allListItemsContainer"></div></div></div><div id="addProjectModal" class="modal"><div class="modal-content"><span class="close">&times;</span> <label for="addProjectInput">New Project Name:</label> <input , id="addProjectInput"> <button id="projectSubmitBtn">Submit</button></div></div></div></div></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo List</title>
+<script defer src="/index.bundle.js"></script></head>
+<body>
+    <div id="fullWebpage">
+        <div class="hero">
+            <img class="hamburgerIcon" src=/7c20adac2b88ccdc927d.png />
+            <img class="heroImg" src=/3ee624589ed5885ebf5c.png />
+            <div class="heroTitle">Todo List</div>
+        </div>
+        <div class="sidebarAndTodo">
+            <div class="sidebar">
+                <a href="javascript:void(0)" class="sidebarCloseBtn">&times;</a>
+                <div id="sidebarHeader">My Todo List</div>
+                <div id="todaysTodos">Today</div>
+                <div id="thisWeeksTodos">This Week</div>
+                <div id="completedTodos">Completed</div>
+                <div id="notCompletedTodos">Not Completed</div>
+                <div class="projects">Projects</div>
+                <button id="addProjectBtn">Add Project</button>
+                <button id="deleteCurrentProjectBtn">Delete Current Project</button>
+                <button id="defaultProjectBtn" index="1">Default</button>
+                <div class="allProjectsContainer"></div>
+            </div>
+            <div class="todoSection">
+                <div class="todoAndAddBtn">
+                <div id="addItemBtnCont">
+                    <button id="addItemBtn">Add todo</button>
+                </div>
+                <div class="allListItemsContainer"></div>
+            </div>
+        </div>
+        <!-- The Modal -->
+        <div id="addProjectModal" class="modal">
+        <!-- Modal content -->
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <label for="addProjectInput">New Project Name:</label>
+            <input type="text", id="addProjectInput">
+            <button id="projectSubmitBtn">Submit</button>
+        </div>
+
+        </div>
+    </div>
+</body>
+</html>

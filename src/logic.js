@@ -5,12 +5,9 @@ import { printTodoListToDom } from "./dom.js";
 
 const allListItemsContainer = document.querySelector(".allListItemsContainer");
 
-// Foobar modify todolistorder if currentProject index = originalProjectIndex
-
 // FUNCTIONS FOR CONVERTING VALUES FROM EDIT TO CONFIRMED TODO LIST ITEMS
 // Convert input into an object and add to array
 const createTodoItem = (listItem, selectedListItemId=null) => {
-  console.log(currentProjectIndex)
   let todoItem = {}; 
   todoItem.title = listItem.children[0].value;
   todoItem.priority = listItem.children[1].children[0].value;
@@ -34,7 +31,6 @@ const addTodoToCurrentProjectArr = (todoItem, listItem) => {
       allProjects[currentProjectIndex].push(todoItem);
     }
     addTodoToCurrentProject(todoItem); // add list item object to nested project array
-    console.log(allProjects)
   } else {
     // If todoItem exists, find it and update original project array
     const editedTodo = listItem.getAttribute("todoId")
@@ -44,7 +40,6 @@ const addTodoToCurrentProjectArr = (todoItem, listItem) => {
           const index = j;
           const originalProjectIndex = i;
           allProjects[originalProjectIndex][index] = todoItem;
-          console.log(allProjects)
           printTodoListToDom()
         }
       }
@@ -156,7 +151,6 @@ const createThisWeeksTodoArr = (i, j) => {
       JSON.parse(JSON.stringify(allProjects[i][j]))
     );
   }
-  console.log(allProjects)
 };
 
 const createTodaysTodosArr = (i, j) => {
